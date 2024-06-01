@@ -12,7 +12,7 @@ $application = new Application();
 $start = new class extends Command {
     protected static $defaultName = "start";
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         return Command::SUCCESS;
