@@ -3,6 +3,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use DateTimeInterface;
 
 class Product
 {
@@ -12,13 +13,13 @@ class Product
     private ?Carbon $createdAt;
     private ?Carbon $updatedAt;
 
-    public function __construct(int $id, string $name, int $quantity, ?Carbon $createdAt = null, ?Carbon $updatedAt = null)
+    public function __construct(int $id, string $name, int $quantity, ?string $createdAt = null, ?string $updatedAt = null)
     {
         $this->id = $id;
         $this->name = $name;
         $this->quantity = $quantity;
-        $this->createdAt = $createdAt ?? Carbon::now();
-        $this->updatedAt = $updatedAt ?? Carbon::now();
+        $this->createdAt = $createdAt ? Carbon::parse($createdAt) : Carbon::now("UTC");
+        $this->createdAt = $updatedAt ? Carbon::parse($updatedAt) : Carbon::now("UTC");
     }
 
     public function getQuantity(): int
