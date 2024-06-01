@@ -24,7 +24,12 @@ class ProductCollection
         unset($this->products[$product->getId()]);
     }
 
-    public function get(): array
+    public function get(int $id): Product
+    {
+        return $this->products[$id];
+    }
+
+    public function getAll(): array
     {
         return $this->products;
     }
