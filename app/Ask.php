@@ -82,7 +82,7 @@ class Ask
 
     public function quantity(int $min = 0, $max = 9999999): int
     {
-        $quantityQuestion = (new Question("How much of it do you want to put in to the warehouse? "))
+        $quantityQuestion = (new Question("Enter the quantity ($min-$max) "))
             ->setValidator(function ($input) use ($min, $max): string { // TODO: check if there is a cleaner way to do this
                 return $this->quantityValidator($input, $min, $max);
             });
