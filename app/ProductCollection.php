@@ -12,9 +12,21 @@ class ProductCollection implements JsonSerializable
      */
     private array $products;
 
-    public function __construct(array $products = null)
+    public function __construct(\stdClass $products = null)
     {
-        $this->products = $products ?? [];
+        if ($products) {
+            foreach ($products as $product) {
+                $this->products[$product->id] = new Product(
+                    $product->id,
+                    $product->name,
+                    $product->quantity,
+                    $product->createdAt,
+                    $product->updatedAt
+                );
+            }
+            return;
+        }
+        $this->products = [];
     }
 
     public function add(Product $product): void
