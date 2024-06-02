@@ -32,6 +32,21 @@ class Ask
     }
 
     /**
+     * @param Product[] $products
+     */
+    public function product(array $products): string
+    {
+        $names = [];
+        foreach ($products as $product) {
+            $names[] = "{$product->getName()} ({$product->getId()})";
+        }
+        $question = new ChoiceQuestion("Select a product", $names);
+        $answer = $this->helper->ask($this->input, $this->output, $question);
+        $id = substr($answer, strrpos($answer, "("));
+        return trim($id, "()");
+    }
+
+    /**
      * @return array{product: string, quantity:int}
      */
     public function productInfo(): array
