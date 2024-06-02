@@ -15,8 +15,9 @@ class Ask
     private OutputInterface $output;
     private QuestionHelper $helper;
 
-    public const ADD_PRODUCT = "add product";
+    public const ADD_NEW_PRODUCT = "add new product";
     public const DELETE_PRODUCT = "delete product";
+    public const ADD_PRODUCT = "add product (increase quantity)";
     public const EXIT = "exit";
 
     public function __construct(InputInterface $input, OutputInterface $output)
@@ -29,8 +30,9 @@ class Ask
     public function mainAction(): string
     {
         $question = new ChoiceQuestion("What do you want to do?", [
-            $this::ADD_PRODUCT,
+            $this::ADD_NEW_PRODUCT,
             $this::DELETE_PRODUCT,
+            $this::ADD_PRODUCT,
             $this::EXIT,
         ]);
         return $this->helper->ask($this->input, $this->output, $question);
@@ -58,22 +60,30 @@ class Ask
     {
         $nameQuestion = new Question("What is the product name? ");
         $name = $this->helper->ask($this->input, $this->output, $nameQuestion);
-        $quantityQuestion = (new Question("How much of it do you want to put in to the warehouse? "))
-            ->setValidator(function ($input) { // TODO: check if there is a cleaner way to do this
-                return $this->quantityValidator($input);
-            });
-        $quantity = (int)$this->helper->ask($this->input, $this->output, $quantityQuestion);
+        $quantity = $this->quantity();
         return [$name, $quantity]; // TODO: do this in a cleaner way
     }
 
-    private function quantityValidator(string $input): string
+    private function quantityValidator(string $input, $min, $max): string
     {
         if (!is_numeric($input)) {
             throw new \Exception("Value must be a number");
         }
-        if ($input <= 0) {
-            throw new \Exception("Value must be greater than 0");
+        if ($input < $min) {
+            throw new \Exception("Value must be greater than or equal to $min");
+        }
+        if ($input > $max) {
+            throw new \Exception("Value must be less than or equal to $max");
         }
         return $input;
+    }
+
+    public function quantity(int $min = 0, $max = 9999999): int
+    {
+        $quantityQuestion = (new Question("How much of it do you want to put in to the warehouse? "))
+            ->setValidator(function ($input) use ($min, $max): string { // TODO: check if there is a cleaner way to do this
+                return $this->quantityValidator($input, $min, $max);
+            });
+        return (int)$this->helper->ask($this->input, $this->output, $quantityQuestion);
     }
 }
