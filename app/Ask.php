@@ -18,6 +18,7 @@ class Ask
     public const ADD_NEW_PRODUCT = "add new product";
     public const DELETE_PRODUCT = "delete product";
     public const ADD_PRODUCT = "add product (increase quantity)";
+    public const WITHDRAW_PRODUCT = "withdraw product";
     public const EXIT = "exit";
 
     public function __construct(InputInterface $input, OutputInterface $output)
@@ -33,6 +34,7 @@ class Ask
             $this::ADD_NEW_PRODUCT,
             $this::DELETE_PRODUCT,
             $this::ADD_PRODUCT,
+            $this::WITHDRAW_PRODUCT,
             $this::EXIT,
         ]);
         return $this->helper->ask($this->input, $this->output, $question);

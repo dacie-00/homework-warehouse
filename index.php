@@ -44,7 +44,7 @@ $start = new class extends Command {
             }
             $mainAction = $ask->mainAction();
             switch ($mainAction) {
-                case Ask::ADD_PRODUCT:
+                case Ask::ADD_NEW_PRODUCT:
                     [$name, $quantity] = $ask->productInfo();
                     $warehouse->add(new Product(Uuid::uuid4()->toString(), $name, $quantity));
                     $this->save($warehouse);
@@ -52,6 +52,20 @@ $start = new class extends Command {
                 case Ask::DELETE_PRODUCT:
                     $id = $ask->product($warehouse->getAll());
                     $warehouse->delete($warehouse->get($id));
+                    $this->save($warehouse);
+                    break;
+                case ASK::ADD_PRODUCT:
+                    $id = $ask->product($warehouse->getAll());
+                    $product = $warehouse->get($id);
+                    $quantity = $ask->quantity(0);
+                    $product->setQuantity($product->getQuantity() + $quantity);
+                    $this->save($warehouse);
+                    break;
+                case ASK::WITHDRAW_PRODUCT:
+                    $id = $ask->product($warehouse->getAll());
+                    $product = $warehouse->get($id);
+                    $quantity = $ask->quantity(1, $product->getQuantity());
+                    $product->setQuantity($product->getQuantity() + $quantity);
                     $this->save($warehouse);
                     break;
                 case Ask::EXIT:
