@@ -8,13 +8,13 @@ use DateTimeInterface;
 
 class Product
 {
-    private int $id;
+    private string $id;
     private string $name;
     private int $quantity;
     private ?Carbon $createdAt;
     private ?Carbon $updatedAt;
 
-    public function __construct(int $id, string $name, int $quantity, ?string $createdAt = null, ?string $updatedAt = null)
+    public function __construct(string $id, string $name, int $quantity, ?string $createdAt = null, ?string $updatedAt = null)
     {
         $this->id = $id;
         $this->name = $name;
@@ -38,7 +38,7 @@ class Product
         return $this->name;
     }
 
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
