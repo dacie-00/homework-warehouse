@@ -29,8 +29,8 @@ $start = new class extends Command {
                     $warehouse->add(new Product(Uuid::uuid4()->toString(), $name, $quantity));
                     break;
                 case Ask::DELETE_PRODUCT:
-                    $productName = $ask->product($warehouse->getAll());
-                    echo $productName;
+                    $id = $ask->product($warehouse->getAll());
+                    $warehouse->delete($warehouse->get($id));
                     break;
                 case Ask::EXIT:
                     exit("Bye!");
