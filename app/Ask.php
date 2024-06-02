@@ -15,8 +15,9 @@ class Ask
     private OutputInterface $output;
     private QuestionHelper $helper;
 
-    private const ADD_PRODUCT = "add product";
-    private const DELETE_PRODUCT = "delete product";
+    public const ADD_PRODUCT = "add product";
+    public const DELETE_PRODUCT = "delete product";
+    public const EXIT = "exit";
 
     public function __construct(InputInterface $input, OutputInterface $output)
     {
@@ -27,7 +28,11 @@ class Ask
 
     public function mainAction(): string
     {
-        $question = new ChoiceQuestion("What do you want to do?", [$this::ADD_PRODUCT, $this::DELETE_PRODUCT]);
+        $question = new ChoiceQuestion("What do you want to do?", [
+            $this::ADD_PRODUCT,
+            $this::DELETE_PRODUCT,
+            $this::EXIT,
+        ]);
         return $this->helper->ask($this->input, $this->output, $question);
     }
 
@@ -51,17 +56,17 @@ class Ask
      */
     public function productInfo(): array
     {
-        $nameQuestion = new Question("What is the product?");
+        $nameQuestion = new Question("What is the product name? ");
         $name = $this->helper->ask($this->input, $this->output, $nameQuestion);
-        $quantityQuestion = (new Question("How much of it do you want to put in to the warehouse?"))
+        $quantityQuestion = (new Question("How much of it do you want to put in to the warehouse? "))
             ->setValidator(function ($input) { // TODO: check if there is a cleaner way to do this
                 return $this->quantityValidator($input);
             });
         $quantity = (int)$this->helper->ask($this->input, $this->output, $quantityQuestion);
-        return [$name, $quantity];
+        return [$name, $quantity]; // TODO: do this in a cleaner way
     }
 
-    private function quantityValidator($input)
+    private function quantityValidator(string $input): string
     {
         if (!is_numeric($input)) {
             throw new \Exception("Value must be a number");
