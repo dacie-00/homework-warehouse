@@ -32,6 +32,7 @@ class Product implements JsonSerializable
     public function setQuantity(int $quantity): void
     {
         $this->quantity = $quantity;
+        $this->updatedAt = Carbon::now("UTC");
     }
 
     public function getName(): string
