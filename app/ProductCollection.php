@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App;
 
-class ProductCollection
+use JsonSerializable;
+
+class ProductCollection implements JsonSerializable
 {
     /**
      * @var Product[]
@@ -38,5 +40,10 @@ class ProductCollection
     public function setQuantity(Product $product, int $quantity): void
     {
         $product->setQuantity($quantity);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->products;
     }
 }

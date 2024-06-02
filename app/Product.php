@@ -5,8 +5,9 @@ namespace App;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use JsonSerializable;
 
-class Product
+class Product implements JsonSerializable
 {
     private string $id;
     private string $name;
@@ -20,7 +21,7 @@ class Product
         $this->name = $name;
         $this->quantity = $quantity;
         $this->createdAt = $createdAt ? Carbon::parse($createdAt) : Carbon::now("UTC");
-        $this->createdAt = $updatedAt ? Carbon::parse($updatedAt) : Carbon::now("UTC");
+        $this->updatedAt = $updatedAt ? Carbon::parse($updatedAt) : Carbon::now("UTC");
     }
 
     public function getQuantity(): int
@@ -63,4 +64,14 @@ class Product
         $this->updatedAt = $updatedAt;
     }
 
+    public function jsonSerialize(): array
+    {
+        return [
+            "id" => $this->id,
+            "name" => $this->name,
+            "quantity" => $this->quantity,
+            "createdAt" => $this->createdAt->format(DateTimeInterface::ATOM),
+            "updatedAt" => $this->updatedAt->format(DateTimeInterface::ATOM),
+        ];
+    }
 }
