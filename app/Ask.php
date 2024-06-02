@@ -69,13 +69,13 @@ class Ask
     private function quantityValidator(string $input, $min, $max): string
     {
         if (!is_numeric($input)) {
-            throw new \Exception("Value must be a number");
+            throw new \Exception("Quantity must be a number");
         }
         if ($input < $min) {
-            throw new \Exception("Value must be greater than or equal to $min");
+            throw new \Exception("Quantity must be greater than or equal to $min");
         }
         if ($input > $max) {
-            throw new \Exception("Value must be less than or equal to $max");
+            throw new \Exception("Quantity must be less than or equal to $max");
         }
         return $input;
     }
