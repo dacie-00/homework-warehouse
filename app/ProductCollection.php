@@ -25,7 +25,7 @@ class ProductCollection
         unset($this->products[$product->getId()]);
     }
 
-    public function get(int $id): Product
+    public function get(string $id): Product
     {
         return $this->products[$id];
     }
