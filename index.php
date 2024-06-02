@@ -55,11 +55,9 @@ $start = new class extends Command {
                     $this->save($warehouse);
                     break;
                 case Ask::EXIT:
-                    exit("Bye!");
+                    return Command::SUCCESS;
             }
         }
-
-        return Command::SUCCESS;
     }
 };
 
