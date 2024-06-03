@@ -33,11 +33,11 @@ class Ask
     public function mainAction(): string
     {
         $question = new ChoiceQuestion("What do you want to do?", [
-            $this::ADD_NEW_PRODUCT,
-            $this::DELETE_PRODUCT,
-            $this::ADD_TO_PRODUCT,
-            $this::WITHDRAW_FROM_PRODUCT,
-            $this::EXIT,
+            self::ADD_NEW_PRODUCT,
+            self::DELETE_PRODUCT,
+            self::ADD_TO_PRODUCT,
+            self::WITHDRAW_FROM_PRODUCT,
+            self::EXIT,
         ]);
         return $this->helper->ask($this->input, $this->output, $question);
     }
