@@ -63,7 +63,7 @@ $start = new class extends Command {
 
         echo "Welcome, $username!\n";
         while (true) {
-            $isWarehouseEmpty = count($warehouse->getAll()) == 0;
+            $isWarehouseEmpty = count($warehouse->getAll()) === 0;
             if ($isWarehouseEmpty) {
                 echo "The warehouse is empty!\n";
             } else {
@@ -73,8 +73,8 @@ $start = new class extends Command {
             if ($isWarehouseEmpty && in_array($mainAction, [
                     Ask::DELETE_PRODUCT,
                     Ask::WITHDRAW_FROM_PRODUCT,
-                    Ask::ADD_TO_PRODUCT
-                ])) {
+                    Ask::ADD_TO_PRODUCT,
+                ], true)) {
                 echo "You cannot do this as there are no products in the warehouse!\n";
                 continue;
             }
@@ -103,7 +103,7 @@ $start = new class extends Command {
                 case ASK::WITHDRAW_FROM_PRODUCT:
                     $id = $ask->product($warehouse->getAll());
                     $product = $warehouse->get($id);
-                    if ($product->getQuantity() == 0) {
+                    if ($product->getQuantity() === 0) {
                         echo "You cannot withdraw any of this product, as there is 0 of it in stock!\n";
                         continue 2;
                     }
