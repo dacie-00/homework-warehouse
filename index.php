@@ -49,7 +49,6 @@ $start = new class extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // TODO: fix edge case of trying to withdraw a product with 0 stock
         $ask = new Ask($input, $output);
         $warehouse = new ProductCollection($this->load("products"));
         $warehouseDisplay = new ProductDisplay($output);
@@ -108,6 +107,10 @@ $start = new class extends Command {
                 case ASK::WITHDRAW_FROM_PRODUCT:
                     $id = $ask->product($warehouse->getAll());
                     $product = $warehouse->get($id);
+                    if ($product->getQuantity() == 0) {
+                        echo "You cannot withdraw any of this product, as there is 0 of it in stock!\n";
+                        continue 2;
+                    }
                     $quantity = $ask->quantity(1, $product->getQuantity());
                     $product->setQuantity($product->getQuantity() - $quantity);
                     $logger->info("$username removed $quantity from the {$product->getName()} stock");
