@@ -33,7 +33,7 @@ $start = new class extends Command {
         file_put_contents(__DIR__ . "$fileName.json", $serializable);
     }
 
-    private function loginValidate(string $username, string $password, array $users): bool
+    private function validateLogin(string $username, string $password, array $users): bool
     {
         foreach ($users as $user) {
             if ($user->username === $username && password_verify($password, $user->password)) {
@@ -55,7 +55,7 @@ $start = new class extends Command {
         $users = $this->load("/db/users");
         while (true) {
             [$username, $password] = $ask->login();
-            if ($this->loginValidate($username, $password, $users)) {
+            if ($this->validateLogin($username, $password, $users)) {
                 break;
             }
             echo "Incorrect username or password!\n";
