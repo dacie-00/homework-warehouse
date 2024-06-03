@@ -21,8 +21,8 @@ $start = new class extends Command {
 
     private function load(string $fileName)
     {
-        if (file_exists(__DIR__ . "/db/$fileName.json")) {
-            return json_decode(file_get_contents(__DIR__ . "/db/$fileName.json"));
+        if (file_exists(__DIR__ . "$fileName.json")) {
+            return json_decode(file_get_contents(__DIR__ . "$fileName.json"));
         }
         return null;
     }
@@ -30,10 +30,7 @@ $start = new class extends Command {
     private function save(JsonSerializable $serializable, string $fileName): void
     {
         $serializable = json_encode($serializable, JSON_PRETTY_PRINT);
-        if (!is_dir(__DIR__ . "/db")) {
-            mkdir(__DIR__ . "/db");
-        }
-        file_put_contents(__DIR__ . "/db/$fileName.json", $serializable);
+        file_put_contents(__DIR__ . "$fileName.json", $serializable);
     }
 
     private function loginValidate(string $username, string $password, array $users): bool
@@ -49,13 +46,13 @@ $start = new class extends Command {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $ask = new Ask($input, $output);
-        $warehouse = new ProductList($this->load("products"));
+        $warehouse = new ProductList($this->load("/db/products"));
         $warehouseDisplay = new DisplayProducts($output);
 
         $logger = new Logger("logger");
         $logger->pushHandler(new StreamHandler(__DIR__ . "/db/products.log"));
 
-        $users = $this->load("users");
+        $users = $this->load("/db/users");
         while (true) {
             [$username, $password] = $ask->login();
             if ($this->loginValidate($username, $password, $users)) {
@@ -86,14 +83,14 @@ $start = new class extends Command {
                     [$name, $quantity] = $ask->productInfo();
                     $warehouse->add(new Product($name, $quantity));
                     $logger->info("$username added the product $name to warehouse");
-                    $this->save($warehouse, "products");
+                    $this->save($warehouse, "/db/products");
                     break;
                 case Ask::DELETE_PRODUCT:
                     $id = $ask->product($warehouse->getAll());
                     $product = $warehouse->get($id);
                     $warehouse->delete($product);
                     $logger->info("$username deleted the product {$product->getName()} from warehouse");
-                    $this->save($warehouse, "products");
+                    $this->save($warehouse, "/db/products");
                     break;
                 case ASK::ADD_TO_PRODUCT:
                     $id = $ask->product($warehouse->getAll());
@@ -101,7 +98,7 @@ $start = new class extends Command {
                     $quantity = $ask->quantity(1);
                     $product->setQuantity($product->getQuantity() + $quantity);
                     $logger->info("$username added $quantity to the {$product->getName()} stock");
-                    $this->save($warehouse, "products");
+                    $this->save($warehouse, "/db/products");
                     break;
                 case ASK::WITHDRAW_FROM_PRODUCT:
                     $id = $ask->product($warehouse->getAll());
@@ -113,7 +110,7 @@ $start = new class extends Command {
                     $quantity = $ask->quantity(1, $product->getQuantity());
                     $product->setQuantity($product->getQuantity() - $quantity);
                     $logger->info("$username removed $quantity from the {$product->getName()} stock");
-                    $this->save($warehouse, "products");
+                    $this->save($warehouse, "/db/products");
                     break;
                 case Ask::EXIT:
                     return Command::SUCCESS;
