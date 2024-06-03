@@ -47,25 +47,25 @@ class Ask
      */
     public function product(array $products): string
     {
-        $names = [];
+        $productChoices = [];
         foreach ($products as $product) {
-            $names[] = "{$product->getName()} ({$product->getId()})";
+            $productChoices[] = "{$product->getName()} ({$product->getId()})";
         }
-        $question = new ChoiceQuestion("Select a product", $names);
-        $answer = $this->helper->ask($this->input, $this->output, $question);
-        $id = substr($answer, strrpos($answer, "("));
+        $question = new ChoiceQuestion("Select a product", $productChoices);
+        $pickedProduct = $this->helper->ask($this->input, $this->output, $question);
+        $id = substr($pickedProduct, strrpos($pickedProduct, "("));
         return trim($id, "()");
     }
 
     /**
-     * @return array{product: string, quantity:int}
+     * @return array{string, int}
      */
     public function productInfo(): array
     {
         $nameQuestion = new Question("What is the product name? ");
         $name = $this->helper->ask($this->input, $this->output, $nameQuestion);
         $quantity = $this->quantity();
-        return [$name, $quantity]; // TODO: do this in a cleaner way
+        return [$name, $quantity];
     }
 
     private function quantityValidator(string $input, int $min, int $max): string
@@ -92,7 +92,7 @@ class Ask
     }
 
     /**
-     * @return array{username: string, password: string} // TODO: maybe remove the keys here as they are actually not returned
+     * @return array{string, string}
      */
     public function login(): array
     {
