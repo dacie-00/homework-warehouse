@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Ask;
 use App\Product;
 use App\ProductCollection;
+use App\ProductDisplay;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Ramsey\Uuid\Uuid;
@@ -48,8 +49,10 @@ $start = new class extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        // TODO: fix edge case of trying to withdraw a product with 0 stock
         $ask = new Ask($input, $output);
         $warehouse = new ProductCollection($this->load("products"));
+        $warehouseDisplay = new ProductDisplay($output);
 
         $logger = new Logger("logger");
         $logger->pushHandler(new StreamHandler(__DIR__ . "/db/products.log"));
@@ -65,10 +68,21 @@ $start = new class extends Command {
 
         echo "Welcome, $username!\n";
         while (true) {
-            foreach ($warehouse->getAll() as $item) {
-                echo "{$item->getName()} - {$item->getQuantity()}\n";
+            $isWarehouseEmpty = count($warehouse->getAll()) == 0;
+            if ($isWarehouseEmpty) {
+                echo "The warehouse is empty!\n";
+            } else {
+                $warehouseDisplay->displayTable($warehouse->getAll());
             }
             $mainAction = $ask->mainAction();
+            if ($isWarehouseEmpty && in_array($mainAction, [
+                    Ask::DELETE_PRODUCT,
+                    Ask::WITHDRAW_PRODUCT,
+                    Ask::ADD_PRODUCT
+                ])) {
+                echo "You cannot do this as there are no products in the warehouse!\n";
+                continue;
+            }
             switch ($mainAction) {
                 case Ask::ADD_NEW_PRODUCT:
                     [$name, $quantity] = $ask->productInfo();
