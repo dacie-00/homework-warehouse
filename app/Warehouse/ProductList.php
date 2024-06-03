@@ -13,7 +13,7 @@ class ProductList implements JsonSerializable
      */
     private array $products;
 
-    public function __construct(stdClass $products = null)
+    public function __construct(?array $products = null)
     {
         if ($products) {
             foreach ($products as $product) {
