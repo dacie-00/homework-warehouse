@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App;
+namespace App\Warehouse;
 
 use JsonSerializable;
 
-class ProductCollection implements JsonSerializable
+class ProductList implements JsonSerializable
 {
     /**
      * @var Product[]
@@ -49,7 +49,7 @@ class ProductCollection implements JsonSerializable
         return $this->products;
     }
 
-    public function setQuantity(Product $product, int $quantity): void
+    public function setQuantity(Product $product, int $quantity): void // TODO: remove this
     {
         $product->setQuantity($quantity);
     }

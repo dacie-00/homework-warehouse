@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 use App\Ask;
-use App\Product;
-use App\ProductCollection;
-use App\ProductDisplay;
+use App\Warehouse\Product;
+use App\Warehouse\ProductList;
+use App\Warehouse\DisplayProducts;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Application;
@@ -49,8 +49,8 @@ $start = new class extends Command {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $ask = new Ask($input, $output);
-        $warehouse = new ProductCollection($this->load("products"));
-        $warehouseDisplay = new ProductDisplay($output);
+        $warehouse = new ProductList($this->load("products"));
+        $warehouseDisplay = new DisplayProducts($output);
 
         $logger = new Logger("logger");
         $logger->pushHandler(new StreamHandler(__DIR__ . "/db/products.log"));

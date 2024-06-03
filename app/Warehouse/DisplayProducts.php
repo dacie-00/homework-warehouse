@@ -1,11 +1,11 @@
 <?php
 
-namespace App;
+namespace App\Warehouse;
 
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ProductDisplay
+class DisplayProducts
 {
     private OutputInterface $output;
 
