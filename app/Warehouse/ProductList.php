@@ -49,11 +49,6 @@ class ProductList implements JsonSerializable
         return $this->products;
     }
 
-    public function setQuantity(Product $product, int $quantity): void // TODO: remove this
-    {
-        $product->setQuantity($quantity);
-    }
-
     public function jsonSerialize(): array
     {
         return $this->products;
