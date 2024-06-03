@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Warehouse\Product;
+use Exception;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -67,21 +68,21 @@ class Ask
         return [$name, $quantity]; // TODO: do this in a cleaner way
     }
 
-    private function quantityValidator(string $input, $min, $max): string
+    private function quantityValidator(string $input, int $min, int $max): string
     {
         if (!is_numeric($input)) {
-            throw new \Exception("Quantity must be a number");
+            throw new Exception("Quantity must be a number");
         }
         if ($input < $min) {
-            throw new \Exception("Quantity must be greater than or equal to $min");
+            throw new Exception("Quantity must be greater than or equal to $min");
         }
         if ($input > $max) {
-            throw new \Exception("Quantity must be less than or equal to $max");
+            throw new Exception("Quantity must be less than or equal to $max");
         }
         return $input;
     }
 
-    public function quantity(int $min = 0, $max = 9999999): int
+    public function quantity(int $min = 0, int $max = 9999999): int
     {
         $quantityQuestion = (new Question("Enter the quantity ($min-$max) "))
             ->setValidator(function ($input) use ($min, $max): string { // TODO: check if there is a cleaner way to do this
@@ -89,7 +90,6 @@ class Ask
             });
         return (int)$this->helper->ask($this->input, $this->output, $quantityQuestion);
     }
-
 
     /**
      * @return array{username: string, password: string} // TODO: maybe remove the keys here as they are actually not returned

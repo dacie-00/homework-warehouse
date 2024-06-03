@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Warehouse;
 
 use JsonSerializable;
+use stdClass;
 
 class ProductList implements JsonSerializable
 {
@@ -12,7 +13,7 @@ class ProductList implements JsonSerializable
      */
     private array $products;
 
-    public function __construct(\stdClass $products = null)
+    public function __construct(stdClass $products = null)
     {
         if ($products) {
             foreach ($products as $product) {

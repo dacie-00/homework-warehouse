@@ -13,11 +13,16 @@ class Product implements JsonSerializable
     private string $id;
     private string $name;
     private int $quantity;
-    private ?Carbon $createdAt;
-    private ?Carbon $updatedAt;
+    private Carbon $createdAt;
+    private Carbon $updatedAt;
 
-    public function __construct(string $name, int $quantity, ?string $id = null, ?string $createdAt = null, ?string $updatedAt = null)
-    {
+    public function __construct(
+        string $name,
+        int $quantity,
+        ?string $id = null,
+        ?string $createdAt = null,
+        ?string $updatedAt = null
+    ) {
         $this->id = $id ?: Uuid::uuid4()->toString();
         $this->name = $name;
         $this->quantity = $quantity;
@@ -46,12 +51,12 @@ class Product implements JsonSerializable
         return $this->id;
     }
 
-    public function getCreatedAt(): ?Carbon
+    public function getCreatedAt(): Carbon
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): ?Carbon
+    public function getUpdatedAt(): Carbon
     {
         return $this->updatedAt;
     }
