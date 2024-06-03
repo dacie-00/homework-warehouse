@@ -86,7 +86,7 @@ $start = new class extends Command {
                 case ASK::ADD_PRODUCT:
                     $id = $ask->product($warehouse->getAll());
                     $product = $warehouse->get($id);
-                    $quantity = $ask->quantity(0);
+                    $quantity = $ask->quantity();
                     $product->setQuantity($product->getQuantity() + $quantity);
                     $logger->info("$username added $quantity to the {$product->getName()} stock");
                     $this->save($warehouse, "products");
