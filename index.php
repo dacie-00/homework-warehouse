@@ -95,7 +95,7 @@ $start = new class extends Command {
                     $id = $ask->product($warehouse->getAll());
                     $product = $warehouse->get($id);
                     $quantity = $ask->quantity(1, $product->getQuantity());
-                    $product->setQuantity($product->getQuantity() + $quantity);
+                    $product->setQuantity($product->getQuantity() - $quantity);
                     $logger->info("$username removed $quantity from the {$product->getName()} stock");
                     $this->save($warehouse, "products");
                     break;
