@@ -17,7 +17,7 @@ class ProductList implements JsonSerializable
     {
         if ($products) {
             foreach ($products as $product) {
-                $this->products[$product->id] = new Product(
+                $this->products[] = new Product(
                     $product->name,
                     $product->quantity,
                     $product->id,
@@ -32,7 +32,7 @@ class ProductList implements JsonSerializable
 
     public function add(Product $product): void
     {
-        $this->products[$product->getId()] = $product;
+        $this->products[] = $product;
     }
 
     public function delete(Product $product): void
@@ -40,9 +40,14 @@ class ProductList implements JsonSerializable
         unset($this->products[$product->getId()]);
     }
 
-    public function get(string $id): Product
+    public function get(string $id): ?Product
     {
-        return $this->products[$id];
+        foreach ($this->products as $product) {
+            if ($product->getId() === $id) {
+                return $product;
+            }
+        }
+        return null;
     }
 
     public function getAll(): array
