@@ -51,19 +51,9 @@ class Product implements JsonSerializable
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?Carbon $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
     public function getUpdatedAt(): ?Carbon
     {
         return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?Carbon $updatedAt): void
-    {
-        $this->updatedAt = $updatedAt;
     }
 
     public function jsonSerialize(): array
