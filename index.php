@@ -7,7 +7,6 @@ use App\ProductCollection;
 use App\ProductDisplay;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
