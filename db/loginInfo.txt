@@ -1,0 +1,10 @@
+Since the passwords are hashed you can't test the login feature, so here's the login info for the example users
+
+username - admin
+password - admin
+
+username - JohnDoe
+password - password123
+
+username - Ross
+password - iLovePainting
