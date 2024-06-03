@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 use App\Ask;
+use App\Warehouse\DisplayProducts;
 use App\Warehouse\Product;
 use App\Warehouse\ProductList;
-use App\Warehouse\DisplayProducts;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Application;
