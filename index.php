@@ -17,7 +17,7 @@ $application = new Application();
 $start = new class extends Command {
     protected static $defaultName = "start";
 
-    private function load(string $fileName): ?stdClass
+    private function load(string $fileName)
     {
         if (file_exists(__DIR__ . "/db/$fileName.json")) {
             return json_decode(file_get_contents(__DIR__ . "/db/$fileName.json"));
@@ -34,12 +34,30 @@ $start = new class extends Command {
         file_put_contents(__DIR__ . "/db/$fileName.json", $serializable);
     }
 
+    private function loginValidate(string $username, string $password, array $users): bool
+    {
+        foreach ($users as $user) {
+            if ($user->username === $username && password_verify($password, $user->password)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $ask = new Ask($input, $output);
         $warehouse = new ProductCollection($this->load("products"));
+        $users = $this->load("users");
+        while (true) {
+            [$username, $password] = $ask->login();
+            if ($this->loginValidate($username, $password, $users)) {
+                break;
+            }
+            echo "Incorrect username or password!\n";
+        }
 
+        echo "Welcome, $username!\n";
         while (true) {
             foreach ($warehouse->getAll() as $item) {
                 echo "{$item->getName()} - {$item->getQuantity()}\n";

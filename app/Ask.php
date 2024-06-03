@@ -88,4 +88,18 @@ class Ask
             });
         return (int)$this->helper->ask($this->input, $this->output, $quantityQuestion);
     }
+
+
+    /**
+     * @return array{username: string, password: string} // TODO: maybe remove the keys here as they are actually not returned
+     */
+    public function login(): array
+    {
+        $usernameQuestion = new Question("Enter your username ");
+        $username = $this->helper->ask($this->input, $this->output, $usernameQuestion);
+        $passwordQuestion = new Question("Enter your password ");
+        $passwordQuestion->setHidden(true);
+        $password = $this->helper->ask($this->input, $this->output, $passwordQuestion);
+        return [$username, $password];
+    }
 }
