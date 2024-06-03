@@ -6,6 +6,7 @@ namespace App;
 use Carbon\Carbon;
 use DateTimeInterface;
 use JsonSerializable;
+use Ramsey\Uuid\Uuid;
 
 class Product implements JsonSerializable
 {
@@ -15,9 +16,9 @@ class Product implements JsonSerializable
     private ?Carbon $createdAt;
     private ?Carbon $updatedAt;
 
-    public function __construct(string $id, string $name, int $quantity, ?string $createdAt = null, ?string $updatedAt = null)
+    public function __construct(string $name, int $quantity, ?string $id = null, ?string $createdAt = null, ?string $updatedAt = null)
     {
-        $this->id = $id;
+        $this->id = $id ?: Uuid::uuid4()->toString();
         $this->name = $name;
         $this->quantity = $quantity;
         $this->createdAt = $createdAt ? Carbon::parse($createdAt) : Carbon::now("UTC");

@@ -48,7 +48,7 @@ $start = new class extends Command {
             switch ($mainAction) {
                 case Ask::ADD_NEW_PRODUCT:
                     [$name, $quantity] = $ask->productInfo();
-                    $warehouse->add(new Product(Uuid::uuid4()->toString(), $name, $quantity));
+                    $warehouse->add(new Product($name, $quantity));
                     $this->save($warehouse, "products");
                     break;
                 case Ask::DELETE_PRODUCT:

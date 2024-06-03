@@ -17,9 +17,9 @@ class ProductCollection implements JsonSerializable
         if ($products) {
             foreach ($products as $product) {
                 $this->products[$product->id] = new Product(
-                    $product->id,
                     $product->name,
                     $product->quantity,
+                    $product->id,
                     $product->createdAt,
                     $product->updatedAt
                 );
