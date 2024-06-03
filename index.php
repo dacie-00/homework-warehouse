@@ -4,6 +4,8 @@ declare(strict_types=1);
 use App\Ask;
 use App\Product;
 use App\ProductCollection;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -48,6 +50,10 @@ $start = new class extends Command {
     {
         $ask = new Ask($input, $output);
         $warehouse = new ProductCollection($this->load("products"));
+
+        $logger = new Logger("logger");
+        $logger->pushHandler(new StreamHandler(__DIR__ . "/db/products.log"));
+
         $users = $this->load("users");
         while (true) {
             [$username, $password] = $ask->login();
@@ -67,11 +73,14 @@ $start = new class extends Command {
                 case Ask::ADD_NEW_PRODUCT:
                     [$name, $quantity] = $ask->productInfo();
                     $warehouse->add(new Product($name, $quantity));
+                    $logger->info("$username added the product $name to warehouse");
                     $this->save($warehouse, "products");
                     break;
                 case Ask::DELETE_PRODUCT:
                     $id = $ask->product($warehouse->getAll());
-                    $warehouse->delete($warehouse->get($id));
+                    $product = $warehouse->get($id);
+                    $warehouse->delete($product);
+                    $logger->info("$username deleted the product {$product->getName()} from warehouse");
                     $this->save($warehouse, "products");
                     break;
                 case ASK::ADD_PRODUCT:
@@ -79,6 +88,7 @@ $start = new class extends Command {
                     $product = $warehouse->get($id);
                     $quantity = $ask->quantity(0);
                     $product->setQuantity($product->getQuantity() + $quantity);
+                    $logger->info("$username added $quantity to the {$product->getName()} stock");
                     $this->save($warehouse, "products");
                     break;
                 case ASK::WITHDRAW_PRODUCT:
@@ -86,6 +96,7 @@ $start = new class extends Command {
                     $product = $warehouse->get($id);
                     $quantity = $ask->quantity(1, $product->getQuantity());
                     $product->setQuantity($product->getQuantity() + $quantity);
+                    $logger->info("$username removed $quantity from the {$product->getName()} stock");
                     $this->save($warehouse, "products");
                     break;
                 case Ask::EXIT:
