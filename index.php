@@ -22,14 +22,14 @@ $start = new class extends Command {
     private function load(string $fileName)
     {
         if (file_exists(__DIR__ . "$fileName.json")) {
-            return json_decode(file_get_contents(__DIR__ . "$fileName.json"));
+            return json_decode(file_get_contents(__DIR__ . "$fileName.json"), false, 512, JSON_THROW_ON_ERROR);
         }
         return null;
     }
 
     private function save(JsonSerializable $serializable, string $fileName): void
     {
-        $serializable = json_encode($serializable, JSON_PRETTY_PRINT);
+        $serializable = json_encode($serializable, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
         file_put_contents(__DIR__ . "$fileName.json", $serializable);
     }
 
