@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Warehouse\Product;
-use Exception;
+use RuntimeException;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -71,13 +71,13 @@ class Ask
     private function quantityValidator(string $input, int $min, int $max): string
     {
         if (!is_numeric($input)) {
-            throw new Exception("Quantity must be a number");
+            throw new RuntimeException("Quantity must be a number");
         }
         if ($input < $min) {
-            throw new Exception("Quantity must be greater than or equal to $min");
+            throw new RuntimeException("Quantity must be greater than or equal to $min");
         }
         if ($input > $max) {
-            throw new Exception("Quantity must be less than or equal to $max");
+            throw new RuntimeException("Quantity must be less than or equal to $max");
         }
         return $input;
     }
