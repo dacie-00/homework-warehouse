@@ -77,8 +77,8 @@ $start = new class extends Command {
             $mainAction = $ask->mainAction();
             if ($isWarehouseEmpty && in_array($mainAction, [
                     Ask::DELETE_PRODUCT,
-                    Ask::WITHDRAW_PRODUCT,
-                    Ask::ADD_PRODUCT
+                    Ask::WITHDRAW_FROM_PRODUCT,
+                    Ask::ADD_TO_PRODUCT
                 ])) {
                 echo "You cannot do this as there are no products in the warehouse!\n";
                 continue;
@@ -97,7 +97,7 @@ $start = new class extends Command {
                     $logger->info("$username deleted the product {$product->getName()} from warehouse");
                     $this->save($warehouse, "products");
                     break;
-                case ASK::ADD_PRODUCT:
+                case ASK::ADD_TO_PRODUCT:
                     $id = $ask->product($warehouse->getAll());
                     $product = $warehouse->get($id);
                     $quantity = $ask->quantity();
@@ -105,7 +105,7 @@ $start = new class extends Command {
                     $logger->info("$username added $quantity to the {$product->getName()} stock");
                     $this->save($warehouse, "products");
                     break;
-                case ASK::WITHDRAW_PRODUCT:
+                case ASK::WITHDRAW_FROM_PRODUCT:
                     $id = $ask->product($warehouse->getAll());
                     $product = $warehouse->get($id);
                     $quantity = $ask->quantity(1, $product->getQuantity());

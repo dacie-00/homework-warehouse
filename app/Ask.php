@@ -17,8 +17,8 @@ class Ask
 
     public const ADD_NEW_PRODUCT = "add new product";
     public const DELETE_PRODUCT = "delete product";
-    public const ADD_PRODUCT = "add product (increase quantity)";
-    public const WITHDRAW_PRODUCT = "withdraw product";
+    public const ADD_TO_PRODUCT = "add to product";
+    public const WITHDRAW_FROM_PRODUCT = "withdraw from product";
     public const EXIT = "exit";
 
     public function __construct(InputInterface $input, OutputInterface $output)
@@ -33,8 +33,8 @@ class Ask
         $question = new ChoiceQuestion("What do you want to do?", [
             $this::ADD_NEW_PRODUCT,
             $this::DELETE_PRODUCT,
-            $this::ADD_PRODUCT,
-            $this::WITHDRAW_PRODUCT,
+            $this::ADD_TO_PRODUCT,
+            $this::WITHDRAW_FROM_PRODUCT,
             $this::EXIT,
         ]);
         return $this->helper->ask($this->input, $this->output, $question);
