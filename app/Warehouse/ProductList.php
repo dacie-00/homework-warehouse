@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Warehouse;
 
 use JsonSerializable;
-use stdClass;
+use OutOfBoundsException;
 
 class ProductList implements JsonSerializable
 {
@@ -40,14 +40,14 @@ class ProductList implements JsonSerializable
         unset($this->products[$product->getId()]);
     }
 
-    public function get(string $id): ?Product
+    public function get(string $id): Product
     {
         foreach ($this->products as $product) {
             if ($product->getId() === $id) {
                 return $product;
             }
         }
-        return null;
+        throw new OutOfBoundsException("Product with id $id not found");
     }
 
     public function getAll(): array
