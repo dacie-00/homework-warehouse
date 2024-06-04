@@ -9,122 +9,122 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-// TODO: check if everything that needs to be logged is being logged
 // TODO: see if this file can be cleaned up
 // TODO: see if displayList can be cleaned up
 
 require_once "vendor/autoload.php";
 
-$application = new Application();
+function load(string $fileName)
+{
+    if (file_exists(__DIR__ . "$fileName.json")) {
+        return json_decode(
+            file_get_contents(__DIR__ . "$fileName.json"),
+            false,
+            512,
+            JSON_THROW_ON_ERROR);
+    }
+    return null;
+}
 
-$start = new class extends Command {
-    protected static $defaultName = "start";
+function save(JsonSerializable $serializable, string $fileName): void
+{
+    $serializable = json_encode($serializable, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+    file_put_contents(__DIR__ . "$fileName.json", $serializable);
+}
 
-    private function load(string $fileName)
-    {
-        if (file_exists(__DIR__ . "$fileName.json")) {
-            return json_decode(file_get_contents(__DIR__ . "$fileName.json"), false, 512, JSON_THROW_ON_ERROR);
+function validateLogin(string $username, string $password, array $users): bool
+{
+    foreach ($users as $user) {
+        if ($user->username === $username && password_verify($password, $user->password)) {
+            return true;
         }
-        return null;
     }
+    return false;
+}
 
-    private function save(JsonSerializable $serializable, string $fileName): void
-    {
-        $serializable = json_encode($serializable, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-        file_put_contents(__DIR__ . "$fileName.json", $serializable);
-    }
+function run(InputInterface $input, OutputInterface $output): int
+{
+    $ask = new Ask($input, $output);
+    $warehouse = new ProductList(load("/db/products"));
+    $warehouseDisplay = new DisplayProducts($output);
 
-    private function validateLogin(string $username, string $password, array $users): bool
-    {
-        foreach ($users as $user) {
-            if ($user->username === $username && password_verify($password, $user->password)) {
-                return true;
-            }
+    $logger = new Logger("logger");
+    $logger->pushHandler(new StreamHandler(__DIR__ . "/db/products.log"));
+
+    $users = load("/db/users");
+    while (true) {
+        [$username, $password] = $ask->login();
+        if (validateLogin($username, $password, $users)) {
+            break;
         }
-        return false;
+        echo "Incorrect username or password!\n";
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $ask = new Ask($input, $output);
-        $warehouse = new ProductList($this->load("/db/products"));
-        $warehouseDisplay = new DisplayProducts($output);
 
-        $logger = new Logger("logger");
-        $logger->pushHandler(new StreamHandler(__DIR__ . "/db/products.log"));
+    echo "Welcome, $username!\n";
+    while (true) {
+        $isWarehouseEmpty = count($warehouse->getAll()) === 0;
+        if ($isWarehouseEmpty) {
+            echo "The warehouse is empty!\n";
+        } else {
+            $warehouseDisplay->displayTable($warehouse->getAll());
+        }
 
-        $users = $this->load("/db/users");
-        while (true) {
-            [$username, $password] = $ask->login();
-            if ($this->validateLogin($username, $password, $users)) {
+        $mainAction = $ask->mainAction();
+        if ($isWarehouseEmpty && in_array($mainAction, [
+                Ask::DELETE_PRODUCT,
+                Ask::WITHDRAW_FROM_PRODUCT,
+                Ask::ADD_TO_PRODUCT,
+            ], true)) {
+            echo "You cannot do this as there are no products in the warehouse!\n";
+            continue;
+        }
+        switch ($mainAction) {
+            case Ask::ADD_NEW_PRODUCT:
+                [$name, $quantity] = $ask->productInfo();
+                $warehouse->add(new Product($name, $quantity));
+
+                $logger->info("$username added the product $name to warehouse");
+                save($warehouse, "/db/products");
                 break;
-            }
-            echo "Incorrect username or password!\n";
-        }
+            case Ask::DELETE_PRODUCT:
+                $product = $warehouse->get($ask->product($warehouse->getAll()));
+                $warehouse->delete($product);
 
-        echo "Welcome, $username!\n";
-        while (true) {
-            $isWarehouseEmpty = count($warehouse->getAll()) === 0;
-            if ($isWarehouseEmpty) {
-                echo "The warehouse is empty!\n";
-            } else {
-                $warehouseDisplay->displayTable($warehouse->getAll());
-            }
-            $mainAction = $ask->mainAction();
-            if ($isWarehouseEmpty && in_array($mainAction, [
-                    Ask::DELETE_PRODUCT,
-                    Ask::WITHDRAW_FROM_PRODUCT,
-                    Ask::ADD_TO_PRODUCT,
-                ], true)) {
-                echo "You cannot do this as there are no products in the warehouse!\n";
-                continue;
-            }
-            switch ($mainAction) {
-                case Ask::ADD_NEW_PRODUCT:
-                    [$name, $quantity] = $ask->productInfo();
-                    $warehouse->add(new Product($name, $quantity));
-                    $logger->info("$username added the product $name to warehouse");
-                    $this->save($warehouse, "/db/products");
-                    break;
-                case Ask::DELETE_PRODUCT:
-                    $id = $ask->product($warehouse->getAll());
-                    $product = $warehouse->get($id);
-                    $warehouse->delete($product);
-                    $logger->info("$username deleted the product {$product->getName()} from warehouse");
-                    $this->save($warehouse, "/db/products");
-                    break;
-                case ASK::ADD_TO_PRODUCT:
-                    $id = $ask->product($warehouse->getAll());
-                    $product = $warehouse->get($id);
-                    $quantity = $ask->quantity(1);
-                    $product->setQuantity($product->getQuantity() + $quantity);
-                    $product->updateUpdatedAt();
-                    $logger->info("$username added $quantity to the {$product->getName()} stock");
-                    $this->save($warehouse, "/db/products");
-                    break;
-                case ASK::WITHDRAW_FROM_PRODUCT:
-                    $id = $ask->product($warehouse->getAll());
-                    $product = $warehouse->get($id);
-                    if ($product->getQuantity() === 0) {
-                        echo "You cannot withdraw any of this product, as there is 0 of it in stock!\n";
-                        continue 2;
-                    }
-                    $quantity = $ask->quantity(1, $product->getQuantity());
-                    $product->setQuantity($product->getQuantity() - $quantity);
-                    $product->updateUpdatedAt();
-                    $logger->info("$username removed $quantity from the {$product->getName()} stock");
-                    $this->save($warehouse, "/db/products");
-                    break;
-                case Ask::EXIT:
-                    return Command::SUCCESS;
-            }
+                $logger->info("$username deleted the product {$product->getName()} from warehouse");
+                save($warehouse, "/db/products");
+                break;
+            case ASK::ADD_TO_PRODUCT:
+                $product = $warehouse->get($ask->product($warehouse->getAll()));
+                $quantity = $ask->quantity(1);
+                $product->setQuantity($product->getQuantity() + $quantity);
+                $product->updateUpdatedAt();
+
+                $logger->info("$username added $quantity to the {$product->getName()} stock");
+                save($warehouse, "/db/products");
+                break;
+            case ASK::WITHDRAW_FROM_PRODUCT:
+                $product = $warehouse->get($ask->product($warehouse->getAll()));
+                if ($product->getQuantity() === 0) {
+                    echo "You cannot withdraw any of this product, as there is 0 of it in stock!\n";
+                    continue 2;
+                }
+                $quantity = $ask->quantity(1, $product->getQuantity());
+                $product->setQuantity($product->getQuantity() - $quantity);
+                $product->updateUpdatedAt();
+
+                $logger->info("$username removed $quantity from the {$product->getName()} stock");
+                save($warehouse, "/db/products");
+                break;
+            case Ask::EXIT:
+                return Command::SUCCESS;
         }
     }
-};
+}
 
-$application->add($start);
-$application->setDefaultCommand("start");
-$application->run();
+run(new ArgvInput(), new ConsoleOutput());
