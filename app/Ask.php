@@ -68,20 +68,6 @@ class Ask
         return [$name, $quantity];
     }
 
-    private function quantityValidator(string $input, int $min, int $max): string
-    {
-        if (!is_numeric($input)) {
-            throw new RuntimeException("Quantity must be a number");
-        }
-        if ($input < $min) {
-            throw new RuntimeException("Quantity must be greater than or equal to $min");
-        }
-        if ($input > $max) {
-            throw new RuntimeException("Quantity must be less than or equal to $max");
-        }
-        return $input;
-    }
-
     public function quantity(int $min = 0, int $max = 9999999): int
     {
         $quantityQuestion = (new Question("Enter the quantity ($min-$max) "))
@@ -98,9 +84,25 @@ class Ask
     {
         $usernameQuestion = new Question("Enter your username ");
         $username = $this->helper->ask($this->input, $this->output, $usernameQuestion);
+
         $passwordQuestion = new Question("Enter your password ");
         $passwordQuestion->setHidden(true);
         $password = $this->helper->ask($this->input, $this->output, $passwordQuestion);
+
         return [$username, $password];
+    }
+
+    private function quantityValidator(string $input, int $min, int $max): string
+    {
+        if (!is_numeric($input)) {
+            throw new RuntimeException("Quantity must be a number");
+        }
+        if ($input < $min) {
+            throw new RuntimeException("Quantity must be greater than or equal to $min");
+        }
+        if ($input > $max) {
+            throw new RuntimeException("Quantity must be less than or equal to $max");
+        }
+        return $input;
     }
 }
