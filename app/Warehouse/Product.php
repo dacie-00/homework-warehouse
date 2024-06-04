@@ -23,9 +23,9 @@ class Product implements JsonSerializable
         ?string $createdAt = null,
         ?string $updatedAt = null
     ) {
-        $this->id = $id ?: Uuid::uuid4()->toString();
         $this->name = $name;
         $this->quantity = $quantity;
+        $this->id = $id ?: Uuid::uuid4()->toString();
         $this->createdAt = $createdAt ? Carbon::parse($createdAt) : Carbon::now("UTC");
         $this->updatedAt = $updatedAt ? Carbon::parse($updatedAt) : Carbon::now("UTC");
     }
@@ -68,9 +68,9 @@ class Product implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            "id" => $this->id,
             "name" => $this->name,
             "quantity" => $this->quantity,
+            "id" => $this->id,
             "createdAt" => $this->createdAt->format(DateTimeInterface::ATOM),
             "updatedAt" => $this->updatedAt->format(DateTimeInterface::ATOM),
         ];
