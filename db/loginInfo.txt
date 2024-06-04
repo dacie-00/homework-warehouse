@@ -1,4 +1,5 @@
-Since the passwords are hashed you can't test the login feature, so here's the login info for the example users
+Since the passwords aren't stored in plain text in users.json, here they are in plain text for testing purposes.
+This file obviously wouldn't be here in a real world scenario.
 
 username - admin
 password - admin
