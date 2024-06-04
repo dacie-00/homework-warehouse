@@ -36,5 +36,4 @@ class DisplayProducts
         $table->getStyle()->setPadType(STR_PAD_BOTH);
         $table->render();
     }
-
 }
