@@ -12,6 +12,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+// TODO: check if everything that needs to be logged is being logged
+// TODO: see if this file can be cleaned up
+// TODO: see if displayList can be cleaned up
+
 require_once "vendor/autoload.php";
 
 $application = new Application();
@@ -97,6 +101,7 @@ $start = new class extends Command {
                     $product = $warehouse->get($id);
                     $quantity = $ask->quantity(1);
                     $product->setQuantity($product->getQuantity() + $quantity);
+                    $product->updateUpdatedAt();
                     $logger->info("$username added $quantity to the {$product->getName()} stock");
                     $this->save($warehouse, "/db/products");
                     break;
@@ -109,6 +114,7 @@ $start = new class extends Command {
                     }
                     $quantity = $ask->quantity(1, $product->getQuantity());
                     $product->setQuantity($product->getQuantity() - $quantity);
+                    $product->updateUpdatedAt();
                     $logger->info("$username removed $quantity from the {$product->getName()} stock");
                     $this->save($warehouse, "/db/products");
                     break;

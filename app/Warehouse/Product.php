@@ -38,7 +38,6 @@ class Product implements JsonSerializable
     public function setQuantity(int $quantity): void
     {
         $this->quantity = $quantity;
-        $this->updatedAt = Carbon::now("UTC");
     }
 
     public function getName(): string
@@ -59,6 +58,11 @@ class Product implements JsonSerializable
     public function getUpdatedAt(): Carbon
     {
         return $this->updatedAt;
+    }
+
+    public function updateUpdatedAt(): void
+    {
+        $this->updatedAt = Carbon::now("UTC");
     }
 
     public function jsonSerialize(): array
