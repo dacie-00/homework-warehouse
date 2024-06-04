@@ -71,8 +71,8 @@ class Product implements JsonSerializable
             "name" => $this->name,
             "quantity" => $this->quantity,
             "id" => $this->id,
-            "createdAt" => $this->createdAt->format(DateTimeInterface::ATOM),
-            "updatedAt" => $this->updatedAt->format(DateTimeInterface::ATOM),
+            "createdAt" => $this->createdAt->timezone("UTC")->format(DateTimeInterface::ATOM),
+            "updatedAt" => $this->updatedAt->timezone("UTC")->format(DateTimeInterface::ATOM),
         ];
     }
 }
