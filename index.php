@@ -117,6 +117,6 @@ while (true) {
             save($warehouse, "/db/products");
             break;
         case Ask::EXIT:
-            exit();
+            exit;
     }
 }
