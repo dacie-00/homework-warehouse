@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 
 require_once "vendor/autoload.php";
 
-function load(string $fileName)
+function load(string $fileName): ?array
 {
     if (file_exists(__DIR__ . "$fileName.json")) {
         return json_decode(
