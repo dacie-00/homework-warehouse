@@ -37,7 +37,12 @@ class ProductList implements JsonSerializable
 
     public function delete(Product $product): void
     {
-        unset($this->products[$product->getId()]);
+        foreach ($this->products as $index => $otherProduct) {
+            if ($product === $otherProduct) {
+                unset($this->products[$index]);
+                $this->products = array_values($this->products);
+            }
+        }
     }
 
     public function get(string $id): Product
