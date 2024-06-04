@@ -10,8 +10,6 @@ use Monolog\Logger;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-// TODO: see if displayList can be cleaned up
-
 require_once "vendor/autoload.php";
 
 function load(string $fileName)
@@ -63,6 +61,7 @@ while (true) {
 }
 
 echo "Welcome, $username!\n";
+$logger->info("$username logged into the database");
 while (true) {
     $isWarehouseEmpty = count($warehouse->getAll()) === 0;
     if ($isWarehouseEmpty) {
